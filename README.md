@@ -73,14 +73,18 @@ devt cd <TAB>
 
 **Tip**: For an even better completion experience with fuzzy search and preview, install [fzf-tab](https://github.com/Aloxaf/fzf-tab)!
 
-### Cache Management
+### Search-based Completion
+
+For large organizations like Shopify (with 22k+ repos), devt uses **real-time search** instead of caching:
+
+1. Start typing at least 2 characters of the repo name
+2. Results are fetched dynamically from GitHub as you type
+3. Much faster than trying to cache thousands of repos
 
 ```bash
-# Refresh DevDegree repo cache manually
-devt-refresh-cache
+# Just start typing and hit TAB
+devt clone my-r<TAB>    # Searches for repos starting with "my-r"
 ```
-
-Cache is automatically refreshed every hour.
 
 ## How It Works
 
@@ -107,6 +111,15 @@ With tmux, this gives you a clean, named tmux session for each repo you're worki
 ## Configuration
 
 devt uses gitc's shared utilities and configuration. See the [gitc README](../gitc/README.md) for configuration options.
+
+### devt-specific Configuration
+
+You can override the GitHub organization:
+
+```zsh
+# In your .zshrc before sourcing devt
+export DEVT_ORG="Shopify"  # Default
+```
 
 ## License
 

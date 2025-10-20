@@ -17,6 +17,13 @@ else
 fi
 
 # ============================================================================
+# Configuration
+# ============================================================================
+
+# Organization to use for devt (can be overridden)
+DEVT_ORG="${DEVT_ORG:-Shopify}"
+
+# ============================================================================
 # devt command - tmux sessions with dev tool
 # ============================================================================
 
@@ -36,7 +43,8 @@ devt() {
 }
 
 devt-refresh-cache() {
-  _refresh_github_cache "devdegree" "${HOME}/.cache/devt-devdegree-repos" 1000 "DevDegree"
+  echo "Note: With large orgs like Shopify (22k+ repos), caching is not practical."
+  echo "devt uses real-time search instead. Type at least 2 characters to search."
 }
 
 _devt() {
@@ -51,21 +59,29 @@ _devt() {
   if [[ $CURRENT -eq 3 ]]; then
     case "$words[2]" in
       clone)
+        local current_word="${words[3]}"
         local -a repos
-        local cache_file="${HOME}/.cache/devt-devdegree-repos"
-        repos=("${(@f)$(_fetch_github_repos "devdegree" "$cache_file")}")
         
-        if [[ ${#repos[@]} -gt 0 ]]; then
-          _describe 'DevDegree repositories' repos
+        # Use search-based completion for large orgs (Shopify has 22k+ repos)
+        if [[ ${#current_word} -ge 2 ]]; then
+          # Real-time search based on what user has typed
+          repos=("${(@f)$(_search_github_repos "$DEVT_ORG" "$current_word" 50)}")
+          
+          if [[ ${#repos[@]} -gt 0 ]]; then
+            _describe "$DEVT_ORG repositories matching '$current_word'" repos
+          else
+            _message "No repos found matching '$current_word' (type at least 2 characters)"
+          fi
         else
-          _message "Install gh CLI and run: gh auth login"
+          _message "Type at least 2 characters to search $DEVT_ORG repos"
         fi
         ;;
       cd)
-        local devdegree_dir="${HOME}/src/github.com/DevDegree"
-        if [[ -d "$devdegree_dir" ]]; then
+        # For cd, show local repos from the most common location
+        local org_dir="${HOME}/src/github.com/${DEVT_ORG}"
+        if [[ -d "$org_dir" ]]; then
           local -a local_repos
-          local_repos=("${(@f)$(ls -1 $devdegree_dir 2>/dev/null)}")
+          local_repos=("${(@f)$(ls -1 $org_dir 2>/dev/null)}")
           _describe 'local repositories' local_repos
         fi
         ;;
