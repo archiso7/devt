@@ -71,6 +71,8 @@ devt clone <TAB>
 devt cd <TAB>
 ```
 
+**Tip**: For an even better completion experience with fuzzy search and preview, install [fzf-tab](https://github.com/Aloxaf/fzf-tab)!
+
 ### Cache Management
 
 ```bash
@@ -91,12 +93,16 @@ This gives you a clean, named tmux session for each repo you're working on.
 
 ## Requirements
 
+### Required
 - `zsh`
 - `tmux`
 - `git`
 - `gh` (GitHub CLI) - for auto-completion
 - `dev` (Shopify's dev tool)
 - **`gitc.zsh`** - Required dependency
+
+### Recommended
+- [fzf-tab](https://github.com/Aloxaf/fzf-tab) - For enhanced fuzzy-search completion with preview windows
 
 ## Configuration
 
