@@ -73,18 +73,14 @@ devt cd <TAB>
 
 **Tip**: For an even better completion experience with fuzzy search and preview, install [fzf-tab](https://github.com/Aloxaf/fzf-tab)!
 
-### Search-based Completion
-
-For large organizations like Shopify (with 22k+ repos), devt uses **real-time search** instead of caching:
-
-1. Start typing at least 2 characters of the repo name
-2. Results are fetched dynamically from GitHub as you type
-3. Much faster than trying to cache thousands of repos
+### Cache Management
 
 ```bash
-# Just start typing and hit TAB
-devt clone my-r<TAB>    # Searches for repos starting with "my-r"
+# Refresh DevDegree repo cache manually
+devt-refresh-cache
 ```
+
+Cache is automatically refreshed every hour.
 
 ## How It Works
 

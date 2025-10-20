@@ -17,13 +17,6 @@ else
 fi
 
 # ============================================================================
-# Configuration
-# ============================================================================
-
-# Organization to use for devt (can be overridden)
-DEVT_ORG="${DEVT_ORG:-Shopify}"
-
-# ============================================================================
 # devt command - tmux sessions with dev tool
 # ============================================================================
 
@@ -43,8 +36,7 @@ devt() {
 }
 
 devt-refresh-cache() {
-  echo "Note: With large orgs like Shopify (22k+ repos), caching is not practical."
-  echo "devt uses real-time search instead. Type at least 2 characters to search."
+  _refresh_github_cache "devdegree" "${HOME}/.cache/devt-devdegree-repos" 1000 "DevDegree"
 }
 
 _devt() {
