@@ -4,9 +4,9 @@ A wrapper for Shopify's `dev` tool that creates tmux sessions for seamless devel
 
 ## Features
 
-- 🪟 **Tmux integration**: Automatically creates tmux sessions when running dev commands
+- 🪟 **Tmux integration** (optional): Automatically creates tmux sessions when running dev commands if tmux is available
 - ⚡ **Auto-completion**: Tab completion for DevDegree repositories
-- 📦 **Works with dev cd and dev clone**: Wraps both commands with tmux sessions
+- 📦 **Works with dev cd and dev clone**: Wraps both commands with optional tmux sessions
 - 🔧 **Depends on gitc**: Uses gitc's shared utilities for GitHub integration
 
 ## Installation
@@ -85,23 +85,23 @@ Cache is automatically refreshed every hour.
 ## How It Works
 
 When you run `devt clone` or `devt cd`:
-1. A new tmux session is created with the repo name
-2. The `dev clone` or `dev cd` command is executed inside the session
-3. You're automatically attached to the session
+1. If tmux is available, a new tmux session is created with the repo name
+2. The `dev clone` or `dev cd` command is executed (inside the session if tmux is available)
+3. If tmux is available, you're automatically attached to the session
 
-This gives you a clean, named tmux session for each repo you're working on.
+With tmux, this gives you a clean, named tmux session for each repo you're working on. Without tmux, it simply runs the dev command directly.
 
 ## Requirements
 
 ### Required
 - `zsh`
-- `tmux`
 - `git`
 - `gh` (GitHub CLI) - for auto-completion
 - `dev` (Shopify's dev tool)
 - **`gitc.zsh`** - Required dependency
 
 ### Recommended
+- `tmux` - For automatic session creation and management (gracefully degrades without it)
 - [fzf-tab](https://github.com/Aloxaf/fzf-tab) - For enhanced fuzzy-search completion with preview windows
 
 ## Configuration
