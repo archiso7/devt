@@ -7,10 +7,10 @@
 
 # Source gitc.zsh for shared utilities
 # Adjust this path based on where gitc.zsh is installed
-if [[ -f "${0:A:h}/gitc.zsh" ]]; then
-  source "${0:A:h}/gitc.zsh"
-elif [[ -f "${HOME}/.config/zsh/gitc.zsh" ]]; then
-  source "${HOME}/.config/zsh/gitc.zsh"
+if [[ -f "${0:A:h}/gitc/gitc.zsh" ]]; then
+  source "${0:A:h}/gitc/gitc.zsh"
+elif [[ -f "${HOME}/.config/zsh/gitc/gitc.zsh" ]]; then
+  source "${HOME}/.config/zsh/gitc/gitc.zsh"
 else
   echo "Error: gitc.zsh not found. devt requires gitc.zsh to be installed."
   return 1
@@ -36,9 +36,7 @@ devt() {
 }
 
 devt-refresh-cache() {
-  echo "Refreshing Shopify repos cache..."
-  gh repo list devdegree --limit 1000 --json nameWithOwner --jq '.[].nameWithOwner' > "${HOME}/.cache/devt-devdegree-repos"
-  echo "Cache refreshed!"
+  _refresh_github_cache "devdegree" "${HOME}/.cache/devt-devdegree-repos" 1000 "DevDegree"
 }
 
 _devt() {
