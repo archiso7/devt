@@ -7,8 +7,8 @@
 
 # Source gitc.zsh for shared utilities
 # Adjust this path based on where gitc.zsh is installed
-if [[ -f "${0:A:h}/gitc/gitc.zsh" ]]; then
-  source "${0:A:h}/gitc/gitc.zsh"
+if [[ -f "${0:A:h}/../gitc/gitc.zsh" ]]; then
+  source "${0:A:h}/../gitc/gitc.zsh"
 elif [[ -f "${HOME}/.config/zsh/gitc/gitc.zsh" ]]; then
   source "${HOME}/.config/zsh/gitc/gitc.zsh"
 else
@@ -17,13 +17,20 @@ else
 fi
 
 # ============================================================================
+# Configuration
+# ============================================================================
+
+# Default organization for devt
+DEVT_ORG="${DEVT_ORG:-Shopify}"
+
+# ============================================================================
 # devt command - tmux sessions with dev tool
 # ============================================================================
 
 devt() {
   # Validate arguments
   if [[ $# -lt 2 ]]; then
-    echo "Usage: devt {cd|clone} <arguments>"
+    echo "Usage: devt {cd|clone} <repo-name|org/repo>"
     return 1
   fi
   
@@ -32,11 +39,20 @@ devt() {
     return 1
   fi
   
-  _tmux_session_with_command "dev" "$@"
+  local action="$1"
+  local repo="$2"
+  shift 2
+  
+  # If repo doesn't contain a slash, prepend DEVT_ORG
+  if [[ "$action" == "clone" && "$repo" != */* ]]; then
+    repo="${DEVT_ORG}/${repo}"
+  fi
+  
+  _tmux_session_with_command "dev" "$action" "$repo" "$@"
 }
 
 devt-refresh-cache() {
-  _refresh_github_cache "devdegree" "${HOME}/.cache/devt-devdegree-repos" 1000 "DevDegree"
+  _refresh_github_cache "$DEVT_ORG" "${HOME}/.cache/gitc-${DEVT_ORG}-repos" 1000 "$DEVT_ORG"
 }
 
 _devt() {
@@ -52,20 +68,17 @@ _devt() {
     case "$words[2]" in
       clone)
         local current_word="${words[3]}"
-        local -a repos
         
-        # Use search-based completion for large orgs (Shopify has 22k+ repos)
-        if [[ ${#current_word} -ge 2 ]]; then
-          # Real-time search based on what user has typed
-          repos=("${(@f)$(_search_github_repos "$DEVT_ORG" "$current_word" 50)}")
+        # Check if user is typing "org/" pattern for any org
+        if [[ "$current_word" == */* ]]; then
+          local typed_org="${current_word%%/*}"
+          local typed_query="${current_word#*/}"
           
-          if [[ ${#repos[@]} -gt 0 ]]; then
-            _describe "$DEVT_ORG repositories matching '$current_word'" repos
-          else
-            _message "No repos found matching '$current_word' (type at least 2 characters)"
-          fi
+          # Use shared autocomplete function with full repo names (don't strip owner)
+          _gitc_autocomplete_github_repos "$typed_org" "$typed_query" "$typed_org" false
         else
-          _message "Type at least 2 characters to search $DEVT_ORG repos"
+          # Default to DEVT_ORG, strip owner prefix for cleaner display
+          _gitc_autocomplete_github_repos "$DEVT_ORG" "$current_word" "$DEVT_ORG" true
         fi
         ;;
       cd)
@@ -82,3 +95,4 @@ _devt() {
 }
 
 compdef _devt devt
+
